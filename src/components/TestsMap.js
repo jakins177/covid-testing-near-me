@@ -88,7 +88,7 @@ export class TestsMap extends Component {
         this.setState({
             placesArray: data.results
         })
-        // this.setEmployeeData();
+  
       })
 
     }

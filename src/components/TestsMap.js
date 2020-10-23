@@ -1,13 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import Geocode from "react-geocode";
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+
  const GOOGLE_MAPS_API_KEY = "AIzaSyBsA5qDK3HxdyBR4rhFfuxpUZ2WK0ACCCE";
+ const [selectFacility, setSelectedFacility] = useState(null);
 
  Geocode.setApiKey(GOOGLE_MAPS_API_KEY);
 
 
 
-export  class TestsMap extends Component {
+export class TestsMap extends Component {
 
     constructor(props) {
         super(props);
@@ -57,9 +59,9 @@ export  class TestsMap extends Component {
         console.log("FACILITY DATA: ");
         console.log(data.results);
               
-        // this.setState({
-        //   data: data
-        // })
+        this.setState({
+            placesArray: data.results
+        })
         // this.setEmployeeData();
       })
 
@@ -99,14 +101,28 @@ export  class TestsMap extends Component {
             lng: this.state.searchedLNG
           }}>
 
-<Marker onClick={this.onMarkerClick}
-        name={'brooklyn'} />
 
-<InfoWindow onClose={this.onInfoWindowClose}>
+              {this.state.placesArray.map((facility) => (
+                  <Marker key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
+                  
+                  onClick={() => {
+                      setSelectedFacility(facility);
+                  }}
+                  />
+
+              ))}
+
+{/* <Marker onClick={this.onMarkerClick}
+        name={'brooklyn'} /> */}
+
+{/* <InfoWindow onClose={this.onInfoWindowClose}>
     <div>
       <h1>Test name</h1>
     </div>
-</InfoWindow>
+</InfoWindow> */}
+{selectFacility && (
+    <InfoWindow position = {{lat: selectFacility.geometry.location.lat, lng: selectFacility.geometry.location.lng}}><div>park details</div></InfoWindow>
+)}
 </Map>
 
                 
@@ -118,3 +134,6 @@ export  class TestsMap extends Component {
 export default GoogleApiWrapper({
     apiKey: (GOOGLE_MAPS_API_KEY)
   })(TestsMap)
+
+
+  

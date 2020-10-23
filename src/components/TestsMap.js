@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component } from 'react'
 import Geocode from "react-geocode";
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
@@ -16,12 +16,37 @@ export class TestsMap extends Component {
           searchedLNG: -74.0059728,
           searchedLAT: 40.7127753,
           placesArray: [],
-          selectedFacility: null
+          activeMarker: {},
+          selectedPlace: {},
+          showingInfoWindow: false
         }
 
         this.submitInput = this.submitInput.bind(this);
 
     }
+
+    onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      showingInfoWindow: true
+    });
+
+    onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
+  onMapClicked = () => {
+    if (this.state.showingInfoWindow)
+      this.setState({
+        activeMarker: null,
+        showingInfoWindow: false
+      });
+  };
+
+
     getGeocodeForLocation(locationTerm) {
 
         Geocode.fromAddress(locationTerm).then(
@@ -106,19 +131,25 @@ export class TestsMap extends Component {
 
               {this.state.placesArray.map((facility) => (
          
-                  <Marker key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
+                  <Marker vicinity= {facility.vicinity} name = {facility.name} key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
                   
-                  onClick={() => {
-                  
-                    this.setState({
-                        selectFacility: facility
-                    })
-                   
-                  }}
+                  onClick={this.onMarkerClick}
                   />
               
 
               ))}
+
+<InfoWindow
+          marker={this.state.activeMarker}
+          onClose={this.onInfoWindowClose}
+          visible={this.state.showingInfoWindow}
+        >
+          <div>
+              <h4 style={{color: "black"}}>{this.state.selectedPlace.name}</h4>
+              <h4 style={{color: "black"}}>{this.state.selectedPlace.vicinity}</h4>
+          </div>
+        </InfoWindow>
+
 
 {/* <Marker onClick={this.onMarkerClick}
         name={'brooklyn'} /> */}
@@ -128,12 +159,12 @@ export class TestsMap extends Component {
       <h1>Test name</h1>
     </div>
 </InfoWindow> */}
-{this.state.selectedFacility && ( 
+{/* {this.state.selectedFacility && ( 
     
 
     
     <InfoWindow position = {{lat: this.state.searchedLAT, lng: this.state.searchedLNG}}><div>facility details</div></InfoWindow>
-)}
+)} */}
 </Map>
 
                 

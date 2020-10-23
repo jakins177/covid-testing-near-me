@@ -3,10 +3,9 @@ import Geocode from "react-geocode";
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
  const GOOGLE_MAPS_API_KEY = "AIzaSyBsA5qDK3HxdyBR4rhFfuxpUZ2WK0ACCCE";
- const [selectFacility, setSelectedFacility] = useState(null);
+
 
  Geocode.setApiKey(GOOGLE_MAPS_API_KEY);
-
 
 
 export class TestsMap extends Component {
@@ -16,7 +15,8 @@ export class TestsMap extends Component {
         this.state = {
           searchedLNG: -74.0059728,
           searchedLAT: 40.7127753,
-          placesArray: []
+          placesArray: [],
+          selectedFacility: null
         }
 
         this.submitInput = this.submitInput.bind(this);
@@ -50,7 +50,7 @@ export class TestsMap extends Component {
 
         const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=20000&keyword=COVID-19%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
+        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
       .then((response) => {
         return response.json();
       })
@@ -87,6 +87,8 @@ export class TestsMap extends Component {
 
     render() {
         return (
+
+  
             <div>
                 <h2>Enter Your City Or Zipcode</h2>
 
@@ -103,12 +105,18 @@ export class TestsMap extends Component {
 
 
               {this.state.placesArray.map((facility) => (
+         
                   <Marker key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
                   
                   onClick={() => {
-                      setSelectedFacility(facility);
+                  
+                    this.setState({
+                        selectFacility: facility
+                    })
+                   
                   }}
                   />
+              
 
               ))}
 
@@ -120,13 +128,17 @@ export class TestsMap extends Component {
       <h1>Test name</h1>
     </div>
 </InfoWindow> */}
-{selectFacility && (
-    <InfoWindow position = {{lat: selectFacility.geometry.location.lat, lng: selectFacility.geometry.location.lng}}><div>park details</div></InfoWindow>
+{this.state.selectedFacility && ( 
+    
+
+    
+    <InfoWindow position = {{lat: this.state.searchedLAT, lng: this.state.searchedLNG}}><div>facility details</div></InfoWindow>
 )}
 </Map>
 
                 
             </div>
+           
         )
     }
 }

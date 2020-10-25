@@ -22,6 +22,7 @@ export class TestsMap extends Component {
           placesArray: [],
           activeMarker: {},
           selectedPlace: {},
+          selectedPhone: "",
           showingInfoWindow: false,
           address: ''
         }
@@ -42,11 +43,7 @@ export class TestsMap extends Component {
     // };
 
     onMarkerClick = (props, marker) =>
-    this.setState({
-      activeMarker: marker,
-      selectedPlace: props,
-      showingInfoWindow: true
-    });
+    this.fetchPlaceDetail(props,marker);
 
     onInfoWindowClose = () =>
     this.setState({
@@ -84,6 +81,33 @@ export class TestsMap extends Component {
             }
           );
 
+
+    }
+
+
+    fetchPlaceDetail(props,marker){
+
+      const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
+      fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/details/json?place_id=${props.placeID}&fields=name,rating,formatted_phone_number&key=${GOOGLE_MAPS_API_KEY}`)
+   // fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+       
+      console.log("PLACE DETAIL DATA: ");
+      console.log(data);
+     
+            
+      this.setState({
+        activeMarker: marker,
+        selectedPlace: props,
+        selectedPhone: data.result.formatted_phone_number,
+        showingInfoWindow: true
+      })
+
+    })
 
     }
 
@@ -196,7 +220,7 @@ export class TestsMap extends Component {
 
               {this.state.placesArray.map((facility) => (
          
-                  <Marker vicinity= {facility.vicinity} name = {facility.name} key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
+                  <Marker vicinity= {facility.vicinity} phoneNumber = "" name = {facility.name} placeID = {facility.place_id} key = {facility.place_id} position = {{lat: facility.geometry.location.lat, lng: facility.geometry.location.lng}}
                   
                   onClick={this.onMarkerClick}
                   />
@@ -212,6 +236,7 @@ export class TestsMap extends Component {
           <div>
               <h4 style={{color: "black"}}>{this.state.selectedPlace.name}</h4>
               <h4 style={{color: "black"}}>{this.state.selectedPlace.vicinity}</h4>
+              <h4 style={{color: "black"}}>{this.state.selectedPhone}</h4>
           </div>
         </InfoWindow>
 

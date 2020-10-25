@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import Geocode from "react-geocode";
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
  const GOOGLE_MAPS_API_KEY = "AIzaSyBsA5qDK3HxdyBR4rhFfuxpUZ2WK0ACCCE";
 
@@ -18,12 +22,24 @@ export class TestsMap extends Component {
           placesArray: [],
           activeMarker: {},
           selectedPlace: {},
-          showingInfoWindow: false
+          showingInfoWindow: false,
+          address: ''
         }
 
         this.submitInput = this.submitInput.bind(this);
 
     }
+
+    handleChange = address => {
+      this.setState({ address });
+    };
+
+    // handleSelect = address => {
+    //   geocodeByAddress(address)
+    //     .then(results => getLatLng(results[0]))
+    //     .then(latLng => console.log('Success', latLng))
+    //     .catch(error => console.error('Error', error));
+    // };
 
     onMarkerClick = (props, marker) =>
     this.setState({
@@ -119,7 +135,55 @@ export class TestsMap extends Component {
                 <h2>Enter Your City Or Zipcode</h2>
 
                 <form onSubmit={this.submitInput}>
-  <input type="text" id="search_term" name="lname" /><br/><br/>
+ 
+ 
+ {/* <input type="text" id="search_term" name="lname" /> */}
+
+ <PlacesAutocomplete
+        value={this.state.address}
+        onChange={this.handleChange}
+        onSelect={this.handleSelect}
+      >
+        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+          <div>
+            <input
+              {...getInputProps({
+                placeholder: 'Search Places ...',
+                className: 'location-search-input',
+                id:'search_term'
+              })}
+            />
+            <div style={{color: "black"}} className="autocomplete-dropdown-container">
+              {loading && <div>Loading...</div>}
+              {suggestions.map(suggestion => {
+                const className = suggestion.active
+                  ? 'suggestion-item--active'
+                  : 'suggestion-item';
+                // inline style for demonstration purpose
+                const style = suggestion.active
+                  ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                  : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                return (
+                  <div
+                    {...getSuggestionItemProps(suggestion, {
+                      className,
+                      style,
+                    })}
+                  >
+                    <span>{suggestion.description}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </PlacesAutocomplete>
+
+
+
+      <br/><br/>
+ 
+ 
   <input type="submit" value="Submit"/>
 </form> 
 <br/><br/>

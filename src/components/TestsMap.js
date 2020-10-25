@@ -75,7 +75,7 @@ export class TestsMap extends Component {
 
       const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
+        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=5000&keyword=covid-19%testing&key=${GOOGLE_MAPS_API_KEY}`)
      // fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
       .then((response) => {
         return response.json();
@@ -124,7 +124,7 @@ export class TestsMap extends Component {
 </form> 
 <br/><br/>
 
-<Map google={this.props.google} zoom={14} center={{
+<Map google={this.props.google} zoom={13} center={{
             lat: this.state.searchedLAT,
             lng: this.state.searchedLNG
           }}>

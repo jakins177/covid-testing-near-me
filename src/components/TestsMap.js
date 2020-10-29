@@ -12,6 +12,11 @@ import PlacesAutocomplete, {
  Geocode.setApiKey(GOOGLE_MAPS_API_KEY);
 
 
+ const containerStyle = {
+  width: '400px',
+  height: '400px'
+};
+
 export class TestsMap extends Component {
 
     constructor(props) {
@@ -90,6 +95,7 @@ export class TestsMap extends Component {
       const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
       fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/details/json?place_id=${props.placeID}&fields=name,rating,formatted_phone_number&key=${GOOGLE_MAPS_API_KEY}`)
+      //fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${props.placeID}&fields=name,rating,formatted_phone_number&key=${GOOGLE_MAPS_API_KEY}`)
    // fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
     .then((response) => {
       return response.json();
@@ -111,12 +117,46 @@ export class TestsMap extends Component {
 
     }
 
+
+    fetchPlaces2() {
+
+
+
+    //   let google = this.props.google;
+    //   var pyrmont = new google.maps.LatLng(this.state.searchedLAT,this.state.searchedLNG);
+
+    // let  map = new google.maps.Map(document.getElementById('map'), {
+    //       center: pyrmont,
+    //       zoom: 13
+    //     });
+    
+    //   var request = {
+    //     location: pyrmont,
+    //     radius: '5000',
+    //     keyword: 'covid-19%20testing'
+    //   };
+    
+    //  let service = new google.maps.places.PlacesService(map);
+    //   service.nearbySearch(request, this.thecallback);
+    
+    }
+
+    //   thecallback(results, status) {
+    //   if (status == this.props.google.maps.places.PlacesServiceStatus.OK) {
+    //     for (var i = 0; i < results.length; i++) {
+    //      // createMarker(results[i]);
+    //      console.log(results[i]);
+    //     }
+    //   }
+    // }
+    
+
     fetchPlaces(){
 
       const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=5000&keyword=covid-19%testing&key=${GOOGLE_MAPS_API_KEY}`)
-     // fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=3000&keyword=corona%20virus%20Testing&key=${GOOGLE_MAPS_API_KEY}`)
+        fetch( proxyurl + `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=5000&keyword=covid-19%20testing&key=${GOOGLE_MAPS_API_KEY}`)
+     // fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.searchedLAT},${this.state.searchedLNG}&radius=5000&keyword=covid-19%20testing&key=${GOOGLE_MAPS_API_KEY}`, {)
       .then((response) => {
         return response.json();
       })
@@ -212,7 +252,7 @@ export class TestsMap extends Component {
 </form> 
 <br/><br/>
 
-<Map google={this.props.google} zoom={13} center={{
+<Map id='map' google={this.props.google} mapContainerStyle={containerStyle} zoom={13} center={{
             lat: this.state.searchedLAT,
             lng: this.state.searchedLNG
           }}>
@@ -237,6 +277,7 @@ export class TestsMap extends Component {
               <h4 style={{color: "black"}}>{this.state.selectedPlace.name}</h4>
               <h4 style={{color: "black"}}>{this.state.selectedPlace.vicinity}</h4>
               <h4 style={{color: "black"}}>{this.state.selectedPhone}</h4>
+              <a target="_blank" rel="noopener noreferrer" href={encodeURI(`https://www.google.com/maps/search/?api=1&query=${this.state.selectedPlace.vicinity}&query_place_id=${this.state.selectedPlace.place_id}`)}><h4 style={{color: "blue"}}>Directions</h4></a>
           </div>
         </InfoWindow>
 
@@ -252,7 +293,8 @@ export class TestsMap extends Component {
 }
 
 export default GoogleApiWrapper({
-    apiKey: (GOOGLE_MAPS_API_KEY)
+    apiKey: (GOOGLE_MAPS_API_KEY),
+    libraries: ['places']
   })(TestsMap)
 
 
